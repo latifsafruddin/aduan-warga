@@ -48,6 +48,41 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        @media print {
+            body, .dark body { 
+                background-color: white !important; 
+                color: black !important; 
+            }
+            .dark, .dark * {
+                background-color: white !important;
+                color: black !important;
+                border-color: #ccc !important;
+            }
+            /* Sembunyikan elemen yang tidak perlu dicetak */
+            #langToggle, #themeToggle, form, .drag-area, button, .mt-8 { 
+                display: none !important; 
+            }
+            #successMessage { 
+                display: block !important; 
+                padding: 0 !important;
+            }
+            .max-w-3xl {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-shadow: none !important;
+            }
+            /* Menyesuaikan area struk agar tampil rapi di kertas */
+            #receiptArea {
+                border: 2px solid #000 !important;
+                background: transparent !important;
+                margin-top: 20px !important;
+                box-shadow: none !important;
+            }
+            .print\:block {
+                display: block !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen py-10 px-4 sm:px-6 lg:px-8 text-gray-800 dark:bg-gray-900 bg-gray-100 transition-colors duration-300">
@@ -198,10 +233,45 @@
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2" data-i18n="successTitle">Laporan Berhasil Terkirim!</h2>
                     <p class="text-gray-600 dark:text-gray-400 mb-6" data-i18n="successDesc">Terima kasih atas kepedulian Anda. Laporan Anda telah kami terima dan akan segera ditindaklanjuti oleh perangkat Desa Sumberejo.</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-8"><span data-i18n="ticketNo">Nomor Tiket:</span> <span class="font-mono font-bold text-gray-800 dark:text-gray-200" id="ticketNumber"></span></p>
-                    <button onclick="resetForm()" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-blue-700 dark:text-blue-100 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" data-i18n="newReport">
-                        Buat Laporan Baru
-                    </button>
+                    
+                    <!-- Area Bukti Laporan (Kwitansi) -->
+                    <div id="receiptArea" class="mt-4 mb-8 text-left max-w-lg mx-auto bg-gray-50 dark:bg-gray-700/50 p-6 rounded-lg border border-gray-200 dark:border-gray-600 shadow-inner transition-colors">
+                        <div class="border-b border-gray-300 dark:border-gray-500 pb-3 mb-4 flex justify-between items-center">
+                            <h3 class="font-bold text-lg text-gray-900 dark:text-white" data-i18n="receiptTitle">Bukti Pengaduan</h3>
+                            <i class="ph ph-seal-check text-blue-500 text-2xl hidden print:block"></i>
+                        </div>
+                        <div class="space-y-3 text-sm text-gray-800 dark:text-gray-200">
+                            <div class="flex flex-col sm:flex-row sm:justify-between border-b border-gray-200 dark:border-gray-600 pb-2">
+                                <span class="font-medium text-gray-500 dark:text-gray-400" data-i18n="ticketNo">Nomor Tiket:</span> 
+                                <span class="font-mono font-bold text-blue-600 dark:text-blue-400 text-base" id="r_ticket"></span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between border-b border-gray-200 dark:border-gray-600 pb-2">
+                                <span class="font-medium text-gray-500 dark:text-gray-400" data-i18n="r_date">Tanggal:</span> 
+                                <span id="r_date" class="font-medium"></span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between border-b border-gray-200 dark:border-gray-600 pb-2">
+                                <span class="font-medium text-gray-500 dark:text-gray-400" data-i18n="r_name">Nama Pelapor:</span> 
+                                <span id="r_name" class="font-medium"></span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between border-b border-gray-200 dark:border-gray-600 pb-2">
+                                <span class="font-medium text-gray-500 dark:text-gray-400" data-i18n="r_category">Kategori:</span> 
+                                <span id="r_category" class="font-medium"></span>
+                            </div>
+                            <div class="flex flex-col pt-1">
+                                <span class="font-medium text-gray-500 dark:text-gray-400 mb-1" data-i18n="r_location">Lokasi & Deskripsi:</span> 
+                                <span id="r_location" class="italic bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
+                        <button onclick="window.print()" class="w-full sm:w-auto inline-flex justify-center items-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                            <i class="ph ph-printer text-lg mr-2"></i> <span data-i18n="printPdf">Cetak PDF / Print</span>
+                        </button>
+                        <button onclick="resetForm()" class="w-full sm:w-auto inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-blue-700 dark:text-blue-100 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" data-i18n="newReport">
+                            Buat Laporan Baru
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -249,6 +319,12 @@
                 successTitle: "Laporan Berhasil Terkirim!",
                 successDesc: "Terima kasih atas kepedulian Anda. Laporan Anda telah kami terima dan akan segera ditindaklanjuti oleh perangkat Desa Sumberejo.",
                 ticketNo: "Nomor Tiket:",
+                receiptTitle: "Bukti Pengaduan",
+                r_date: "Tanggal:",
+                r_name: "Nama Pelapor:",
+                r_category: "Kategori:",
+                r_location: "Lokasi & Deskripsi:",
+                printPdf: "Cetak PDF / Print",
                 newReport: "Buat Laporan Baru",
                 footerCopy: "© 2026 Pemerintah Desa Sumberejo. Hak cipta dilindungi undang-undang.",
                 footerContact: "Untuk keadaan darurat, silakan hubungi WhatsApp Desa:"
@@ -286,6 +362,12 @@
                 successTitle: "Report Submitted Successfully!",
                 successDesc: "Thank you for your concern. Your report has been received and will be followed up immediately by the Sumberejo Village officials.",
                 ticketNo: "Ticket Number:",
+                receiptTitle: "Report Receipt",
+                r_date: "Date:",
+                r_name: "Reporter Name:",
+                r_category: "Category:",
+                r_location: "Location & Description:",
+                printPdf: "Print / Save PDF",
                 newReport: "Create New Report",
                 footerCopy: "© 2026 Sumberejo Village Government. All rights reserved.",
                 footerContact: "For emergencies, please contact the Village WhatsApp:"
@@ -351,7 +433,11 @@
         const form = document.getElementById('pengaduanForm');
         const submitBtn = document.getElementById('submitBtn');
         const successMessage = document.getElementById('successMessage');
-        const ticketNumberSpan = document.getElementById('ticketNumber');
+        const ticketNumberSpan = document.getElementById('r_ticket');
+        const r_dateSpan = document.getElementById('r_date');
+        const r_nameSpan = document.getElementById('r_name');
+        const r_categorySpan = document.getElementById('r_category');
+        const r_locationSpan = document.getElementById('r_location');
         const submitText = document.getElementById('submitText');
         const submitIcon = document.getElementById('submitIcon');
 
@@ -439,7 +525,25 @@
             // Simulate API Call
             setTimeout(() => {
                 const ticket = 'SMB-' + Math.floor(100000 + Math.random() * 900000);
+                
+                // Mengambil nilai dari input form
+                const nama = document.getElementById('namaLengkap').value;
+                const kategoriSelect = document.getElementById('kategori');
+                const kategoriText = kategoriSelect.options[kategoriSelect.selectedIndex].text;
+                const deskripsi = document.getElementById('deskripsi').value;
+                
+                // Format tanggal saat ini sesuai bahasa
+                const today = new Date();
+                const dateString = today.toLocaleDateString(currentLang === 'id' ? 'id-ID' : 'en-US', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'
+                });
+
+                // Memasukkan data ke dalam template Struk
                 ticketNumberSpan.textContent = ticket;
+                r_dateSpan.textContent = dateString;
+                r_nameSpan.textContent = nama;
+                r_categorySpan.textContent = kategoriText;
+                r_locationSpan.textContent = deskripsi;
                 
                 form.classList.add('hidden');
                 successMessage.classList.remove('hidden');
